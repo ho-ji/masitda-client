@@ -242,72 +242,73 @@ const CartTable = () => {
         </tr>
       </Thead>
       <tbody>
-        {cartList.map((item, i) => {
-          return (
-            <Tr key={i}>
-              <td>
-                <Label>
-                  <input
-                    type="checkbox"
-                    checked={item.isSelected === undefined ? true : item.isSelected}
-                    onChange={handleSelectChange(item.product._id)}></input>
-                </Label>
-              </td>
-              <td>
-                <ProductName>
-                  <img
-                    src={item.product.image}
-                    alt={`${item.product.name} 이미지`}
-                  />
-                  <div>
-                    <Temp>{item.product.temp}</Temp>
-                    <Name>{item.product.name}</Name>
-                  </div>
-                </ProductName>
-              </td>
-              <td>
-                <>
-                  <Cost>{`${formatSaleCost(item.product.cost, item.product.rate)}원`}</Cost>
-                  {item.product.rate !== 0 && <RegularCost>{`${formatCostWithComma(item.product.cost)}원`}</RegularCost>}
-                </>
-              </td>
-              <td>
-                <Count>
-                  <MinusButton
-                    $count="minus"
-                    type="button"
-                    onClick={handleCountButtonClick(item.count, item.product._id, -1)}>
-                    <span className="a11y-hidden">상품수량감소</span>
-                  </MinusButton>
-                  <p>{item.count}</p>
-                  <PlusButton
-                    $count="plus"
-                    type="button"
-                    onClick={handleCountButtonClick(item.count, item.product._id, 1)}>
-                    <span className="a11y-hidden">상품수량증가</span>
-                  </PlusButton>
-                </Count>
-              </td>
-              <td>
-                <p>{`${formatSaleCost(item.product.cost, item.product.rate, item.count)}원`}</p>
-              </td>
-              <td>
-                <Select>
-                  <BuyNowButton
-                    type="button"
-                    onClick={handleBuyNowClick(item.product._id, item.count, item.product.cost, item.product.rate)}>
-                    바로구매
-                  </BuyNowButton>
-                  <DeleteButton
-                    type="button"
-                    onClick={handleDeleteOneClick(item.product._id)}>
-                    삭제하기
-                  </DeleteButton>
-                </Select>
-              </td>
-            </Tr>
-          )
-        })}
+        {cartList &&
+          cartList.map((item, i) => {
+            return (
+              <Tr key={i}>
+                <td>
+                  <Label>
+                    <input
+                      type="checkbox"
+                      checked={item.isSelected === undefined ? true : item.isSelected}
+                      onChange={handleSelectChange(item.product._id)}></input>
+                  </Label>
+                </td>
+                <td>
+                  <ProductName>
+                    <img
+                      src={item.product.image}
+                      alt={`${item.product.name} 이미지`}
+                    />
+                    <div>
+                      <Temp>{item.product.temp}</Temp>
+                      <Name>{item.product.name}</Name>
+                    </div>
+                  </ProductName>
+                </td>
+                <td>
+                  <>
+                    <Cost>{`${formatSaleCost(item.product.cost, item.product.rate)}원`}</Cost>
+                    {item.product.rate !== 0 && <RegularCost>{`${formatCostWithComma(item.product.cost)}원`}</RegularCost>}
+                  </>
+                </td>
+                <td>
+                  <Count>
+                    <MinusButton
+                      $count="minus"
+                      type="button"
+                      onClick={handleCountButtonClick(item.count, item.product._id, -1)}>
+                      <span className="a11y-hidden">상품수량감소</span>
+                    </MinusButton>
+                    <p>{item.count}</p>
+                    <PlusButton
+                      $count="plus"
+                      type="button"
+                      onClick={handleCountButtonClick(item.count, item.product._id, 1)}>
+                      <span className="a11y-hidden">상품수량증가</span>
+                    </PlusButton>
+                  </Count>
+                </td>
+                <td>
+                  <p>{`${formatSaleCost(item.product.cost, item.product.rate, item.count)}원`}</p>
+                </td>
+                <td>
+                  <Select>
+                    <BuyNowButton
+                      type="button"
+                      onClick={handleBuyNowClick(item.product._id, item.count, item.product.cost, item.product.rate)}>
+                      바로구매
+                    </BuyNowButton>
+                    <DeleteButton
+                      type="button"
+                      onClick={handleDeleteOneClick(item.product._id)}>
+                      삭제하기
+                    </DeleteButton>
+                  </Select>
+                </td>
+              </Tr>
+            )
+          })}
       </tbody>
     </Container>
   )
