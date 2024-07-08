@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export const instance = axios.create({
-  baseURL: 'http://localhost:4500/api',
+  baseURL: 'https://acceptable-virgina-yeji-85400ab7.koyeb.app/api',
   withCredentials: true,
 })
 export const setAuthToken = (token) => {
