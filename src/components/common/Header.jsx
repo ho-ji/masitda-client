@@ -134,7 +134,7 @@ const Header = () => {
         setLoading(false)
       }
     }
-    getCartCount()
+    if (location.pathname !== '/cart') getCartCount()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

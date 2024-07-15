@@ -106,7 +106,7 @@ const LogInForm = () => {
           type="password"
         />
       </InputContainer>
-      <LogInButton type="submit">로그인</LogInButton>
+      <LogInButton>로그인</LogInButton>
     </Form>
   )
 }

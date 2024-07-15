@@ -3,7 +3,7 @@ import {useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil'
 import styled from 'styled-components'
 import {useMediaQuery} from 'react-responsive'
 
-import {deleleCartProductAPI} from 'api/cart'
+import {deleleCartProductAPI, getCartListAPI} from 'api/cart'
 import {cartListState} from 'recoil/cart/atom'
 import checkImage from 'assets/images/check.svg'
 import CartTable from './CartTable'
@@ -12,8 +12,10 @@ import useModal from 'hooks/useModal'
 import CartCost from './CartCost'
 import CartPurchase from './CartPurchase'
 import {tokenState} from 'recoil/token/atom'
-import {mainContainerStyle} from 'styles/variables'
+import {mainContainerStyle, skeletonStyle} from 'styles/variables'
 import CartList from './CartList'
+import {useErrorBoundary} from 'react-error-boundary'
+import {updateUID} from 'utils/uid'
 
 const Container = styled.main`
   ${mainContainerStyle}
@@ -59,6 +61,11 @@ const SelectContainer = styled.div`
     }
   }
 `
+const Loading = styled.div`
+  ${skeletonStyle}
+  height: 30rem;
+  margin-top: 3rem;
+`
 
 const NoItem = styled.p`
   width: 100%;
@@ -71,14 +78,16 @@ const NoItem = styled.p`
 `
 
 const CartMain = () => {
+  const [cartList, setCartList] = useRecoilState(cartListState)
   const [token, setToken] = useRecoilState(tokenState)
-  const cartList = useRecoilValue(cartListState)
   const updateAllSelect = useSetRecoilState(updateAllSelectSelector)
   const selectedIdList = useRecoilValue(getSelectedIdListSelector)
   const deleteMultiple = useSetRecoilState(deleteMultipleSelector)
   const [isAllSelect, setIsAllSelect] = useState(true)
   const {updateModal, openModal} = useModal()
   const isMobile = useMediaQuery({query: '(max-width: 768px)'})
+  const [loading, setLoading] = useState(false)
+  const {showBoundary} = useErrorBoundary()
 
   const handleAllSelectChange = (e) => {
     updateAllSelect(e.target.checked)
@@ -103,40 +112,67 @@ const CartMain = () => {
   }
 
   useEffect(() => {
-    window.scrollTo(0, 0)
+    const getCartCount = async () => {
+      try {
+        setLoading(true)
+        const result = await getCartListAPI(token)
+        if (result.data.success) {
+          if (result.data.accessToken) {
+            setToken(result.data.accessToken)
+          }
+          setCartList(result.data.products)
+        } else {
+          setToken('')
+          setCartList([])
+          updateUID()
+        }
+      } catch (error) {
+        showBoundary(error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    getCartCount()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
-    <Container>
-      <CartHeader>
-        <h2>장바구니</h2>
-        <span>{`상품 (${cartList.length})`}</span>
-        <span className="a11y-hidden">개</span>
-      </CartHeader>
-      {cartList.length !== 0 ? (
-        <>
-          <SelectContainer>
-            <label>
-              <input
-                type="checkbox"
-                checked={isAllSelect}
-                onChange={handleAllSelectChange}></input>
-              전체선택
-            </label>
-            <button
-              type="button"
-              onClick={handleDeleteClick}>
-              선택삭제
-            </button>
-          </SelectContainer>
-          {isMobile ? <CartList /> : <CartTable />}
-          <CartCost />
-          <CartPurchase />
-        </>
-      ) : (
-        <NoItem>장바구니가 비어 있습니다</NoItem>
-      )}
-    </Container>
+    <>
+      <Container>
+        <CartHeader>
+          <h2>장바구니</h2>
+          <span>{`상품 (${loading ? ' ' : cartList.length})`}</span>
+          <span className="a11y-hidden">개</span>
+        </CartHeader>
+        {!loading ? (
+          cartList.length !== 0 ? (
+            <>
+              <SelectContainer>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={isAllSelect}
+                    onChange={handleAllSelectChange}></input>
+                  전체선택
+                </label>
+                <button
+                  type="button"
+                  onClick={handleDeleteClick}>
+                  선택삭제
+                </button>
+              </SelectContainer>
+              {isMobile ? <CartList /> : <CartTable />}
+              <CartCost />
+              <CartPurchase />
+            </>
+          ) : (
+            <NoItem>장바구니가 비어 있습니다</NoItem>
+          )
+        ) : (
+          <Loading></Loading>
+        )}
+      </Container>
+    </>
   )
 }
 
