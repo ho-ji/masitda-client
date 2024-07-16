@@ -98,13 +98,15 @@ const TotalOrder = styled.div`
 `
 
 const UserInformation = () => {
-  const [name, setName] = useState('ㅤㅤㅤ')
+  const [name, setName] = useState('')
   const [orderCount, setOrderCount] = useState(0)
   const [token, setToken] = useRecoilState(tokenState)
   const {showBoundary} = useErrorBoundary()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const getUserInformation = async () => {
+      setLoading(true)
       try {
         const result = await getUserInformationAPI(token)
         if (result.data.success) {
@@ -114,6 +116,8 @@ const UserInformation = () => {
         }
       } catch (error) {
         showBoundary(error)
+      } finally {
+        setLoading(false)
       }
     }
     getUserInformation()
@@ -129,7 +133,7 @@ const UserInformation = () => {
           alt=""
         />
         <Name>
-          {name}
+          {loading ? 'ㅤㅤㅤ' : name}
           <span>님 </span>
           <span>안녕하세요.</span>
         </Name>
@@ -137,11 +141,11 @@ const UserInformation = () => {
         <TotalOrder>
           <p>주문 배송</p>
           <div>
-            <span>{orderCount}</span> 회
+            <span>{loading ? 'ㅤ' : orderCount}</span> 회
           </div>
         </TotalOrder>
       </UserInfo>
-      <UserOrderList />
+      <UserOrderList></UserOrderList>
     </Container>
   )
 }

@@ -7,6 +7,7 @@ import {Link} from 'react-router-dom'
 import OrderListItem from 'components/common/order/OrderListItem'
 import {tokenState} from 'recoil/token/atom'
 import {getRecentOrderAPI} from 'api/order'
+import SkeletonOrderListItem from 'components/common/order/SkeletonOrderListItem'
 
 const OrderList = styled.section`
   display: flex;
@@ -43,10 +44,12 @@ const NoItem = styled.div`
 const UserOrderList = () => {
   const [order, setOrder] = useState([])
   const [token, setToken] = useRecoilState(tokenState)
+  const [loading, setLoading] = useState(false)
   const {showBoundary} = useErrorBoundary()
 
   useEffect(() => {
     const getRecentorder = async () => {
+      setLoading(true)
       try {
         const result = await getRecentOrderAPI(token)
         if (result.data.accessToken) setToken(result.data.accessToken)
@@ -55,6 +58,8 @@ const UserOrderList = () => {
         }
       } catch (error) {
         showBoundary(error)
+      } finally {
+        setLoading(false)
       }
     }
     getRecentorder()
@@ -67,17 +72,23 @@ const UserOrderList = () => {
         <h3>최근 주문상품</h3>
         {order.length !== 0 && <Link to="/myOrder">더보기</Link>}
       </Title>
-      {order.length !== 0 ? (
-        order.map((item) => {
-          return (
-            <OrderListItem
-              order={item}
-              key={item._id}
-            />
-          )
-        })
+      {!loading ? (
+        order.length !== 0 ? (
+          order.map((item) => {
+            return (
+              <OrderListItem
+                order={item}
+                key={item._id}
+              />
+            )
+          })
+        ) : (
+          <NoItem>최근 구매한 상품이 없습니다</NoItem>
+        )
       ) : (
-        <NoItem>최근 구매한 상품이 없습니다</NoItem>
+        Array.from({length: 2}).map((_, i) => {
+          return <SkeletonOrderListItem key={i} />
+        })
       )}
     </OrderList>
   )

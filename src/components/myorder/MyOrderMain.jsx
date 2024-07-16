@@ -8,6 +8,7 @@ import {getOrderAPI} from 'api/order'
 import {tokenState} from 'recoil/token/atom'
 import {mainContainerStyle} from 'styles/variables'
 import OrderListItem from 'components/common/order/OrderListItem'
+import SkeletonOrderListItem from 'components/common/order/SkeletonOrderListItem'
 
 const Container = styled.main`
   ${mainContainerStyle}
@@ -68,7 +69,8 @@ const MyOrderMain = () => {
   return (
     <Container>
       <h2>주문내역</h2>
-      {orderList &&
+      {!loading ? (
+        orderList &&
         orderList.map((order) => (
           <div key={order._id}>
             <OrderDate>주문일자 {order.orderDate?.slice(0, 10)}</OrderDate>
@@ -81,7 +83,15 @@ const MyOrderMain = () => {
               ))}
             </ul>
           </div>
-        ))}
+        ))
+      ) : (
+        <>
+          <OrderDate>ㅤ</OrderDate>
+          {Array.from({length: 3}).map((_, i) => {
+            return <SkeletonOrderListItem key={i} />
+          })}
+        </>
+      )}
     </Container>
   )
 }
