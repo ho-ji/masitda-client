@@ -46,17 +46,6 @@ export const getUserInformationAPI = async (accessToken) => {
   }
 }
 
-export const getVerifyTokenAPI = async (accessToken) => {
-  const uid = getUID()
-  setAuthToken(accessToken)
-  try {
-    const result = await instance.get(`/user/login/${uid}`)
-    return result
-  } catch (error) {
-    throw error
-  }
-}
-
 export const deleteLogOutAPI = async () => {
   const uid = getUID()
   try {

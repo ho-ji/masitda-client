@@ -56,7 +56,7 @@ const AddressContainer = styled.div`
 const AddressSearch = styled.button`
   margin-left: 2rem;
   ${mainSmallButtonStyle}
-  flex: 0 0 6rem;
+  flex: 0 0 7rem;
 `
 
 const OrderForm = ({formRef}) => {

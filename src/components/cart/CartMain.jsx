@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react'
 import {useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil'
 import styled from 'styled-components'
 import {useMediaQuery} from 'react-responsive'
+import {useErrorBoundary} from 'react-error-boundary'
 
 import {deleleCartProductAPI, getCartListAPI} from 'api/cart'
 import {cartListState} from 'recoil/cart/atom'
@@ -14,7 +15,6 @@ import CartPurchase from './CartPurchase'
 import {tokenState} from 'recoil/token/atom'
 import {mainContainerStyle, skeletonStyle} from 'styles/variables'
 import CartList from './CartList'
-import {useErrorBoundary} from 'react-error-boundary'
 import {updateUID} from 'utils/uid'
 
 const Container = styled.main`
