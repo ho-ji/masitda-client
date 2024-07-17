@@ -1,4 +1,6 @@
+import {useState} from 'react'
 import styled from 'styled-components'
+import {skeletonStyle} from 'styles/variables'
 import {calculateSaleCost, formatCostWithComma} from 'utils/cost'
 
 const Container = styled.li`
@@ -22,9 +24,17 @@ const Info = styled.div`
 `
 
 const Image = styled.img`
+  display: ${(props) => (props.$load ? 'block' : 'none')};
   height: 100%;
   aspect-ratio: 1/1;
   object-fit: cover;
+`
+
+const SkeletonImage = styled.div`
+  display: ${(props) => (props.$load ? 'none' : 'block')};
+  ${skeletonStyle}
+  height: 100%;
+  aspect-ratio: 1/1;
 `
 
 const Temp = styled.p`
@@ -70,13 +80,17 @@ const RegularCost = styled.p`
 `
 
 const OrderListItem = ({order}) => {
+  const [loadImage, setLoadImage] = useState(false)
   return (
     <>
       {order && (
         <Container>
+          <SkeletonImage $load={loadImage} />
           <Image
             src={order.product.image}
             alt="상품 이미지"
+            $load={loadImage}
+            onLoad={() => setLoadImage(true)}
           />
           <Info>
             <Temp>{order.product.temp}</Temp>

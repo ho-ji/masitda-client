@@ -8,6 +8,8 @@ import {postCartProductAPI} from 'api/cart'
 import {updateCountSelector} from 'recoil/cart/selector'
 import useModal from 'hooks/useModal'
 import {tokenState} from 'recoil/token/atom'
+import {useState} from 'react'
+import {skeletonStyle} from 'styles/variables'
 
 const Container = styled(Link)`
   aspect-ratio: 1/1.75;
@@ -32,8 +34,18 @@ const Flag = styled.div`
 const ImageContainer = styled.div`
   position: relative;
 `
+const SkeletonImage = styled.div`
+  display: ${(props) => (props.$load ? 'none' : 'block')};
+  ${skeletonStyle}
+  width: 100%;
+  aspect-ratio: 1/1;
+  margin: 1rem 0;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+`
 
 const Image = styled.img`
+  display: ${(props) => (props.$load ? 'block' : 'none')};
   object-fit: cover;
   width: 100%;
   aspect-ratio: 1/1;
@@ -41,6 +53,7 @@ const Image = styled.img`
   border: 1px solid var(--color-border);
   border-radius: 10px;
 `
+
 const CartButton = styled.button`
   position: absolute;
   bottom: 2rem;
@@ -93,6 +106,7 @@ const Temp = styled.span`
 
 const ProductCard = ({product, type, ranking}) => {
   const [token, setToken] = useRecoilState(tokenState)
+  const [loadImage, setLoadImage] = useState(false)
   const navigate = useNavigate()
   const {updateModal, openModal} = useModal()
   const updateCount = useSetRecoilState(updateCountSelector)
@@ -124,9 +138,12 @@ const ProductCard = ({product, type, ranking}) => {
           </Ranking>
         )}
         <ImageContainer>
+          <SkeletonImage $load={loadImage} />
           <Image
             src={product.image}
             alt="상품이미지"
+            $load={loadImage}
+            onLoad={() => setLoadImage(true)}
           />
           <CartButton
             type="button"

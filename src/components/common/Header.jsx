@@ -176,7 +176,7 @@ const Header = () => {
             </CartCount>
           </MenuLink>
           <MenuLink
-            to={isLogIn ? '/user' : 'login'}
+            to={isLogIn ? '/user' : '/login'}
             onClick={handleUserClick}>
             <MenuImage
               src={userImage}
