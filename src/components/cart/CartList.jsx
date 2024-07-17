@@ -12,6 +12,7 @@ import useModal from 'hooks/useModal'
 import {deleleCartProductAPI, postCartProductAPI} from 'api/cart'
 import {tokenState} from 'recoil/token/atom'
 import closeImage from 'assets/images/close.svg'
+import { skeletonStyle } from 'styles/variables'
 
 const Container = styled.ul`
   border-top: 1px solid black;
@@ -44,7 +45,19 @@ const Label = styled.label`
     }
   }
 `
+const SkeletonImage = styled.div`
+  display: ${(props) => (props.$load ? 'none' : 'block')};
+  ${skeletonStyle}
+  width: 10rem;
+  aspect-ratio: 1/1;
+  align-self: flex-start;
+  @media (max-width: 480px) {
+    width: 6rem;
+  }
+`
+
 const Image = styled.img`
+  display: ${(props) => (props.$load ? 'block' : 'none')};
   width: 10rem;
   aspect-ratio: 1/1;
   object-fit: cover;
@@ -120,6 +133,7 @@ const DeleteButton = styled.button`
 const CartList = () => {
   const [token, setToken] = useRecoilState(tokenState)
   const [loading, setLoading] = useState(false)
+  const [loadImage, setLoadImage] = useState(false)
   const cartList = useRecoilValue(cartListState)
   const updateCheck = useSetRecoilState(updateSelectSelector)
   const updateCount = useSetRecoilState(updateCountSelector)
@@ -180,9 +194,12 @@ const CartList = () => {
                   checked={item.isSelected === undefined ? true : item.isSelected}
                   onChange={handleSelectChange(item.product._id)}></input>
               </Label>
+              <SkeletonImage $load={loadImage} />
               <Image
                 src={item.product.image}
                 alt={`${item.product.name} 이미지`}
+                $load={loadImage}
+                onLoad={() => setLoadImage(true)}
               />
               <ProductInfo>
                 <Temp>{item.product.temp}</Temp>
