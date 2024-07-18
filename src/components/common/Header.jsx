@@ -10,7 +10,7 @@ import userImage from 'assets/images/user.svg'
 import {cartListState} from 'recoil/cart/atom'
 import {getCartListAPI} from 'api/cart'
 import {tokenState} from 'recoil/token/atom'
-import {updateUID} from 'utils/uid'
+import {isGuestUID, updateUID} from 'utils/uid'
 import {deleteLogOutAPI} from 'api/user'
 
 const Container = styled.header`
@@ -81,8 +81,7 @@ const CartCount = styled.strong`
 
 const Header = () => {
   const [cartList, setCartList] = useRecoilState(cartListState)
-  const [isLogIn, setIsLogIn] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [isLogIn, setIsLogIn] = useState(!isGuestUID())
   const [token, setToken] = useRecoilState(tokenState)
   const location = useLocation()
   const navigate = useNavigate()
@@ -123,11 +122,9 @@ const Header = () => {
   useEffect(() => {
     const getCartCount = async () => {
       try {
-        setLoading(true)
         const result = await getCartListAPI(token)
         if (result.data.success) {
           if (result.data.accessToken) {
-            setIsLogIn(true)
             setToken(result.data.accessToken)
           }
           setCartList(result.data.products)
@@ -138,8 +135,6 @@ const Header = () => {
         }
       } catch (error) {
         showBoundary(error)
-      } finally {
-        setLoading(false)
       }
     }
     getCartCount()
@@ -149,19 +144,18 @@ const Header = () => {
   return (
     <Container>
       <TopBar>
-        {!loading &&
-          (isLogIn ? (
-            <button
-              type="button"
-              onClick={handleLogOutClick}>
-              로그아웃
-            </button>
-          ) : (
-            <nav>
-              <Link to="/signup">회원가입</Link>
-              <Link to="/login">로그인</Link>
-            </nav>
-          ))}
+        {isLogIn ? (
+          <button
+            type="button"
+            onClick={handleLogOutClick}>
+            로그아웃
+          </button>
+        ) : (
+          <nav>
+            <Link to="/signup">회원가입</Link>
+            <Link to="/login">로그인</Link>
+          </nav>
+        )}
       </TopBar>
       <Menu>
         <h1>
