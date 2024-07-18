@@ -58,7 +58,7 @@ const Equal = styled(Exp)`
   background-image: url(${equalImage});
 `
 
-const Cost = styled.p`
+const Cost = styled.div`
   font-size: var(--font-size-emphasis);
   font-weight: 500;
   display: flex;

@@ -187,7 +187,7 @@ const CartList = () => {
       {cartList &&
         cartList.map((item, i) => {
           return (
-            <CartListItem>
+            <CartListItem key={item._id + i}>
               <Label>
                 <input
                   type="checkbox"
