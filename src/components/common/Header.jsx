@@ -82,6 +82,7 @@ const CartCount = styled.strong`
 const Header = () => {
   const [cartList, setCartList] = useRecoilState(cartListState)
   const [isLogIn, setIsLogIn] = useState(!isGuestUID())
+  const [loading, setLoading] = useState(false)
   const [token, setToken] = useRecoilState(tokenState)
   const location = useLocation()
   const navigate = useNavigate()
@@ -122,6 +123,7 @@ const Header = () => {
   useEffect(() => {
     const getCartCount = async () => {
       try {
+        setLoading(true)
         const result = await getCartListAPI(token)
         if (result.data.success) {
           if (result.data.accessToken) {
@@ -135,6 +137,8 @@ const Header = () => {
         }
       } catch (error) {
         showBoundary(error)
+      } finally {
+        setLoading(false)
       }
     }
     getCartCount()
@@ -173,7 +177,7 @@ const Header = () => {
               alt="장바구니"
             />
             <CartCount>
-              {cartList.length >= 100 ? '99+' : cartList.length}
+              {loading ? ' ' : cartList.length >= 100 ? '99+' : cartList.length}
               <span className="a11y-hidden">개</span>
             </CartCount>
           </MenuLink>
