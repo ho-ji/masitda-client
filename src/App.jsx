@@ -22,6 +22,7 @@ import PasswordReset from 'pages/PasswordReset'
 import GuestOrder from 'pages/GuestOrder'
 import MyOrder from 'pages/MyOrder'
 import ErrorFallback from 'components/common/ErrorFallback'
+import ScrollToTop from 'components/common/ScrollToTop'
 
 const App = () => {
   const PublicRoute = ({element}) => {
@@ -54,6 +55,7 @@ const App = () => {
       <RecoilRoot>
         <BrowserRouter>
           <GlobalStyle />
+          <ScrollToTop />
           <Routes>
             <Route
               path="/"

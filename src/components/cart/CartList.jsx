@@ -12,7 +12,7 @@ import useModal from 'hooks/useModal'
 import {deleleCartProductAPI, postCartProductAPI} from 'api/cart'
 import {tokenState} from 'recoil/token/atom'
 import closeImage from 'assets/images/close.svg'
-import { skeletonStyle } from 'styles/variables'
+import {skeletonStyle} from 'styles/variables'
 
 const Container = styled.ul`
   border-top: 1px solid black;

@@ -88,10 +88,6 @@ const OrderMain = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
-
-  useEffect(() => {
     if (order.length === 0) return
     const cost = order.reduce((acc, item) => {
       return acc + item.count * calculateSaleCost(item.cost, item.rate)

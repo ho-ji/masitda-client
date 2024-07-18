@@ -89,15 +89,23 @@ const Header = () => {
   const {showBoundary} = useErrorBoundary()
 
   const handleLogoClick = () => {
-    if (location.pathname === '/') window.location.reload()
-    window.scrollTo(0, 0)
+    if (location.pathname === '/') {
+      window.location.reload()
+      window.scrollTo(0, 0)
+    }
   }
 
   const handleCartClick = () => {
-    if (location.pathname === '/cart') window.location.reload()
+    if (location.pathname === '/cart') {
+      window.scrollTo(0, 0)
+      window.location.reload()
+    }
   }
   const handleUserClick = () => {
-    if (location.pathname === '/user') window.location.reload()
+    if (location.pathname === '/user') {
+      window.location.reload()
+      window.scrollTo(0, 0)
+    }
   }
 
   const handleLogOutClick = async () => {
@@ -134,7 +142,7 @@ const Header = () => {
         setLoading(false)
       }
     }
-    if (location.pathname !== '/cart') getCartCount()
+    getCartCount()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
