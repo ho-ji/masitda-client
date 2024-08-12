@@ -4,14 +4,15 @@ import {useRecoilValue} from 'recoil'
 import {loadingState} from 'recoil/loading/atom'
 
 const Container = styled.div`
-  position: absolute;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  z-index: 99999;
+  z-index: 9999;
 `
 const Loader = styled.div`
   width: 3.5rem;
