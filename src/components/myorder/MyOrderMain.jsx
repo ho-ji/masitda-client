@@ -80,7 +80,7 @@ const MyOrderMain = () => {
     <Container>
       <h2>주문내역</h2>
       {!initialLoading ? (
-        orderList ? (
+        orderList.length !== 0 ? (
           orderList.map((order) => (
             <div key={order._id}>
               <OrderDate>주문일자 {order.orderDate?.slice(0, 10)}</OrderDate>
