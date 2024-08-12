@@ -25,11 +25,20 @@ const OrderDate = styled.p`
   margin-top: 3rem;
 `
 
+const NoItem = styled.div`
+  padding: 5rem;
+  text-align: center;
+  color: var(--color-text-sub);
+  font-size: var(--font-size-secondary);
+  background: var(--color-light-gray);
+`
+
 const MyOrderMain = () => {
   const [orderList, setOrderList] = useState([])
   const [page, setPage] = useState(1)
   const [isMore, setIsMore] = useState(true)
   const [loading, setLoading] = useState(false)
+  const [initialLoading, setInitialLoading] = useState(true)
   const [token, setToken] = useRecoilState(tokenState)
   const {showBoundary} = useErrorBoundary()
 
@@ -60,6 +69,7 @@ const MyOrderMain = () => {
         showBoundary(error)
       } finally {
         setLoading(false)
+        setInitialLoading(false)
       }
     }
     getOrder()
@@ -69,21 +79,24 @@ const MyOrderMain = () => {
   return (
     <Container>
       <h2>주문내역</h2>
-      {!loading ? (
-        orderList &&
-        orderList.map((order) => (
-          <div key={order._id}>
-            <OrderDate>주문일자 {order.orderDate?.slice(0, 10)}</OrderDate>
-            <ul>
-              {order.products?.map((item) => (
-                <OrderListItem
-                  order={item}
-                  key={item._id}
-                />
-              ))}
-            </ul>
-          </div>
-        ))
+      {!initialLoading ? (
+        orderList ? (
+          orderList.map((order) => (
+            <div key={order._id}>
+              <OrderDate>주문일자 {order.orderDate?.slice(0, 10)}</OrderDate>
+              <ul>
+                {order.products?.map((item) => (
+                  <OrderListItem
+                    order={item}
+                    key={item._id}
+                  />
+                ))}
+              </ul>
+            </div>
+          ))
+        ) : (
+          <NoItem>현재 구매하신 상품이 없습니다</NoItem>
+        )
       ) : (
         <>
           <OrderDate>ㅤ</OrderDate>
