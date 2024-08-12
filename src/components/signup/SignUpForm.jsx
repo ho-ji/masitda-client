@@ -1,10 +1,12 @@
 import styled from 'styled-components'
 import {useEffect, useRef, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
+import {useSetRecoilState} from 'recoil'
 
 import SignUpInput from './SignUpInput'
 import regex from 'constants/regex'
 import {postSignUpAPI} from 'api/user'
+import {loadingState} from 'recoil/loading/atom'
 
 const Container = styled.form`
   width: 100%;
@@ -34,6 +36,7 @@ const SignUpForm = () => {
   const [nameError, setNameError] = useState(true)
   const [phoneNumberError, setPhoneNumberError] = useState(true)
   const [emailError, setEmailError] = useState(true)
+  const setLoading = useSetRecoilState(loadingState)
 
   const handleSignUp = async (e) => {
     e.preventDefault()
@@ -48,10 +51,13 @@ const SignUpForm = () => {
       email: email.value,
     }
     try {
+      setLoading(true)
       await postSignUpAPI(info)
       navigate('/login')
     } catch (error) {
       alert('회원가입 실패! 잠시 후 다시 시도해주세요')
+    } finally {
+      setLoading(false)
     }
   }
 

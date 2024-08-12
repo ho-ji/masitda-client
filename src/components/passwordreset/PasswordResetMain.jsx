@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import {useEffect, useState} from 'react'
 import {useNavigate, useParams} from 'react-router-dom'
+import {useSetRecoilState} from 'recoil'
 
 import {getVerifyResetTokenAPI} from 'api/passwordReset'
 import {postPaswordChangeAPI} from 'api/user'
@@ -9,6 +10,7 @@ import regex from 'constants/regex'
 import useInput from 'hooks/useInput'
 import PasswordResetSuccess from './PasswordResetSuccess'
 import {inputStyle, mainSmallButtonStyle} from 'styles/variables'
+import {loadingState} from 'recoil/loading/atom'
 
 const Container = styled.main`
   margin: 5rem auto;
@@ -42,6 +44,7 @@ const PasswordResetMain = () => {
   const [isReset, setIsReset] = useState(false)
   const {value: passwordValue, handler: handlePasswordChange} = useInput()
   const {value: passwordCheckValue, handler: handlePasswordCheckChange} = useInput()
+  const setLoading = useSetRecoilState(loadingState)
 
   const handlePasswordChangeClick = async (e) => {
     e.preventDefault()
@@ -49,10 +52,13 @@ const PasswordResetMain = () => {
     if (passwordValue !== passwordCheckValue) return alert(signUpText.passwordCheck.validationError)
 
     try {
+      setLoading(true)
       await postPaswordChangeAPI({uid, password: passwordValue})
       setIsReset(true)
     } catch {
       alert('잠시 후 다시 시도해주세요')
+    } finally {
+      setLoading(false)
     }
   }
 

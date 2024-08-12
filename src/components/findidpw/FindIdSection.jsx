@@ -1,11 +1,13 @@
 import styled from 'styled-components'
 import {Link} from 'react-router-dom'
 import {useState} from 'react'
+import {useSetRecoilState} from 'recoil'
 
 import {getFindAccountAPI} from 'api/user'
 import regex from 'constants/regex'
 import useInput from 'hooks/useInput'
 import {mainSmallButtonStyle} from 'styles/variables'
+import {loadingState} from 'recoil/loading/atom'
 
 const InputContainer = styled.div`
   display: flex;
@@ -47,6 +49,7 @@ const FindIdSection = () => {
   const [account, setAccount] = useState('')
   const {value: nameValue, handler: handleNameChange} = useInput()
   const {value: emailValue, handler: handleEmailChange} = useInput()
+  const setLoading = useSetRecoilState(loadingState)
 
   const handleIdSearchClick = async (e) => {
     e.preventDefault()
@@ -54,13 +57,16 @@ const FindIdSection = () => {
     if (!regex.email.test(emailValue)) return alert('이메일을 입력해주세요')
 
     try {
+      setLoading(true)
       const result = await getFindAccountAPI({name: nameValue, email: emailValue})
       if (result.data.success) {
         setAccount(result.data.account)
       } else {
         alert('해당 정보로 일치하는 아이디를 찾을 수 없습니다.')
       }
-    } catch {}
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

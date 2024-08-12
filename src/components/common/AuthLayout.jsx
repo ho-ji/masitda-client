@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import {Link} from 'react-router-dom'
 
 import logoImage from 'assets/images/logo.png'
+import Loading from './Loading'
 
 const Container = styled.div`
   display: grid;
@@ -53,6 +54,7 @@ const AuthLayout = ({children}) => {
           </Logo>
         </h1>
         {children}
+        <Loading />
       </main>
       <AuthFooter>©2024 장예지. All rights reserved.</AuthFooter>
     </Container>

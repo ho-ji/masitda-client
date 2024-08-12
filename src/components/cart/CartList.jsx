@@ -13,6 +13,7 @@ import {deleleCartProductAPI, postCartProductAPI} from 'api/cart'
 import {tokenState} from 'recoil/token/atom'
 import closeImage from 'assets/images/close.svg'
 import {skeletonStyle} from 'styles/variables'
+import {loadingState} from 'recoil/loading/atom'
 
 const Container = styled.ul`
   border-top: 1px solid black;
@@ -132,7 +133,7 @@ const DeleteButton = styled.button`
 `
 const CartList = () => {
   const [token, setToken] = useRecoilState(tokenState)
-  const [loading, setLoading] = useState(false)
+  const setLoading = useSetRecoilState(loadingState)
   const [loadImage, setLoadImage] = useState(false)
   const cartList = useRecoilValue(cartListState)
   const updateCheck = useSetRecoilState(updateSelectSelector)
@@ -145,7 +146,6 @@ const CartList = () => {
   }
 
   const handleCountButtonClick = (currentCount, productId, count) => async () => {
-    if (loading) return
     if (currentCount + count <= 0) return
     try {
       setLoading(true)
@@ -162,7 +162,6 @@ const CartList = () => {
   }
 
   const deleteProduct = async (productId) => {
-    if (loading) return
     try {
       setLoading(true)
       const result = await deleleCartProductAPI([productId], token)

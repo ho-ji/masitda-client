@@ -10,6 +10,7 @@ import useModal from 'hooks/useModal'
 import {tokenState} from 'recoil/token/atom'
 import {useState} from 'react'
 import {skeletonStyle} from 'styles/variables'
+import {loadingState} from 'recoil/loading/atom'
 
 const Container = styled(Link)`
   aspect-ratio: 1/1.75;
@@ -110,8 +111,10 @@ const ProductCard = ({product, type, ranking}) => {
   const navigate = useNavigate()
   const {updateModal, openModal} = useModal()
   const updateCount = useSetRecoilState(updateCountSelector)
+  const setLoading = useSetRecoilState(loadingState)
 
   const handleCartButtonClick = async () => {
+    setLoading(true)
     try {
       const result = await postCartProductAPI({productId: product._id, count: 1, accessToken: token})
       if (result.data.success) {
@@ -124,6 +127,8 @@ const ProductCard = ({product, type, ranking}) => {
       }
     } catch {
       alert('잠시 후 다시 시도해주세요')
+    } finally {
+      setLoading(false)
     }
   }
 

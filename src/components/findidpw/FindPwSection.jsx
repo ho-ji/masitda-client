@@ -1,10 +1,12 @@
 import styled from 'styled-components'
 import {useState} from 'react'
+import {useSetRecoilState} from 'recoil'
 
 import {getFindPasswordAPI} from 'api/user'
 import regex from 'constants/regex'
 import useInput from 'hooks/useInput'
 import {mainSmallButtonStyle} from 'styles/variables'
+import {loadingState} from 'recoil/loading/atom'
 
 const InputContainer = styled.div`
   display: flex;
@@ -48,19 +50,23 @@ const FindPwSection = () => {
   const [isFind, setIsFind] = useState(false)
   const {value: accountValue, handler: handleAccountChange} = useInput()
   const {value: emailValue, handler: handleEmailChange} = useInput()
+  const setLoading = useSetRecoilState(loadingState)
 
   const handleIdSearchClick = async (e) => {
     e.preventDefault()
     if (!regex.account.test(accountValue)) return alert('아이디를 입력해주세요')
     if (!regex.email.test(emailValue)) return alert('이메일을 입력해주세요')
     try {
+      setLoading(true)
       const result = await getFindPasswordAPI({email: emailValue, account: accountValue})
       if (result.data.success) {
         setIsFind(true)
       } else {
         alert('해당 정보로 일치하는 회원정보를 찾을 수 없습니다.')
       }
-    } catch {}
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

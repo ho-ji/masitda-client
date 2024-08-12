@@ -1,12 +1,14 @@
+import {useState} from 'react'
+import styled from 'styled-components'
+
 import {getGuestOrderAPI} from 'api/order'
 import {signUpText} from 'constants/authText'
 import regex from 'constants/regex'
 import useInput from 'hooks/useInput'
-import {useState} from 'react'
-import styled from 'styled-components'
-
+import {useSetRecoilState} from 'recoil'
 import {inputStyle, mainContainerStyle, mainSmallButtonStyle} from 'styles/variables'
 import GuestOrderList from './GuestOrderList'
+import {loadingState} from 'recoil/loading/atom'
 
 const Container = styled.main`
   ${mainContainerStyle}
@@ -53,6 +55,7 @@ const GuestOrderMain = () => {
   const [phoneNumber, setPhoneNumber] = useState('')
   const [phonePrefix, setPhonePrefix] = useState('010')
   const [orderList, setOrderList] = useState([])
+  const setLoading = useSetRecoilState(loadingState)
 
   const handlePhoneNumberChange = (e) => {
     const inputValue = e.target.value
@@ -67,12 +70,15 @@ const GuestOrderMain = () => {
     if (!regex.phoneNumber.test(contactNumber)) return alert(signUpText.phoneNumber.validationError)
 
     try {
+      setLoading(true)
       const result = await getGuestOrderAPI(orderNumber, contactNumber)
       if (!result.data.success) alert('해당 정보로 조회되는 주문이 없습니다.')
       if (result.data.success) {
         setOrderList(result.data.orderList)
       }
-    } catch {}
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

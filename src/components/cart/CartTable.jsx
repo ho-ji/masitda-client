@@ -1,7 +1,6 @@
 import {useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil'
 import styled from 'styled-components'
 import {useNavigate} from 'react-router-dom'
-import {useState} from 'react'
 
 import {cartListState} from 'recoil/cart/atom'
 import {formatCostWithComma, formatSaleCost} from 'utils/cost'
@@ -13,6 +12,7 @@ import useModal from 'hooks/useModal'
 import {deleleCartProductAPI, postCartProductAPI} from 'api/cart'
 import {tokenState} from 'recoil/token/atom'
 import {postTempOrderAPI} from 'api/tempOrder'
+import {loadingState} from 'recoil/loading/atom'
 
 const Container = styled.table`
   border-top: 1px solid black;
@@ -160,7 +160,7 @@ const DeleteButton = styled.button`
 `
 const CartTable = () => {
   const [token, setToken] = useRecoilState(tokenState)
-  const [loading, setLoading] = useState(false)
+  const setLoading = useSetRecoilState(loadingState)
   const cartList = useRecoilValue(cartListState)
   const updateCheck = useSetRecoilState(updateSelectSelector)
   const updateCount = useSetRecoilState(updateCountSelector)
@@ -173,7 +173,6 @@ const CartTable = () => {
   }
 
   const handleCountButtonClick = (currentCount, productId, count) => async () => {
-    if (loading) return
     if (currentCount + count <= 0) return
     try {
       setLoading(true)
@@ -190,7 +189,6 @@ const CartTable = () => {
   }
 
   const deleteProduct = async (productId) => {
-    if (loading) return
     try {
       setLoading(true)
       const result = await deleleCartProductAPI([productId], token)
@@ -206,7 +204,6 @@ const CartTable = () => {
   }
 
   const handleBuyNowClick = (product, count, cost, rate) => async () => {
-    if (loading) return
     try {
       setLoading(true)
       const result = await postTempOrderAPI({token, order: [{product, count, cost, rate}]})

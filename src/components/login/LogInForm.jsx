@@ -8,6 +8,7 @@ import useInput from 'hooks/useInput'
 import {logInText} from 'constants/authText'
 import {tokenState} from 'recoil/token/atom'
 import {mainButtonStyle} from 'styles/variables'
+import {loadingState} from 'recoil/loading/atom'
 
 const Form = styled.form`
   width: 100%;
@@ -48,11 +49,13 @@ const LogInForm = () => {
   const idRef = useRef(null)
   const passwordRef = useRef(null)
   const setToken = useSetRecoilState(tokenState)
+  const setLoading = useSetRecoilState(loadingState)
   const {value: idInput, handler: handleIdChange} = useInput()
   const {value: passwordInput, handler: handlePasswordChange, clear: clearPassword} = useInput()
   const navigate = useNavigate()
 
   const postLogIn = async () => {
+    setLoading(true)
     try {
       const result = await postLogInAPI(idInput, passwordInput)
       if (result.data.success) {
@@ -67,6 +70,8 @@ const LogInForm = () => {
       }
     } catch {
       alert('잠시 후 다시 시도해주세요')
+    } finally {
+      setLoading(false)
     }
   }
 

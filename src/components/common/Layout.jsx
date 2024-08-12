@@ -1,5 +1,6 @@
 import Footer from './Footer'
 import Header from './Header'
+import Loading from './Loading'
 import Modal from './Modal'
 
 const Layout = ({children}) => {
@@ -8,6 +9,7 @@ const Layout = ({children}) => {
       <Header />
       {children}
       <Footer />
+      <Loading />
       <Modal />
     </>
   )

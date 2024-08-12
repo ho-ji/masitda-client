@@ -16,6 +16,7 @@ import {tokenState} from 'recoil/token/atom'
 import {mainContainerStyle, skeletonStyle} from 'styles/variables'
 import CartList from './CartList'
 import {updateUID} from 'utils/uid'
+import {loadingState} from 'recoil/loading/atom'
 
 const Container = styled.main`
   ${mainContainerStyle}
@@ -86,7 +87,8 @@ const CartMain = () => {
   const [isAllSelect, setIsAllSelect] = useState(true)
   const {updateModal, openModal} = useModal()
   const isMobile = useMediaQuery({query: '(max-width: 768px)'})
-  const [loading, setLoading] = useState(false)
+  const setLoading = useSetRecoilState(loadingState)
+  const [dataLoading, setDataLoading] = useState(false)
   const {showBoundary} = useErrorBoundary()
 
   const handleAllSelectChange = (e) => {
@@ -95,6 +97,7 @@ const CartMain = () => {
   }
 
   const deleteSelectedProduct = async () => {
+    setLoading(true)
     try {
       const result = await deleleCartProductAPI(selectedIdList, token)
       if (result.data.success) {
@@ -103,6 +106,8 @@ const CartMain = () => {
       }
     } catch {
       alert('잠시 후 다시 시도해주세요.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -114,7 +119,7 @@ const CartMain = () => {
   useEffect(() => {
     const getCartCount = async () => {
       try {
-        setLoading(true)
+        setDataLoading(true)
         const result = await getCartListAPI(token)
         if (result.data.success) {
           if (result.data.accessToken) {
@@ -129,7 +134,7 @@ const CartMain = () => {
       } catch (error) {
         showBoundary(error)
       } finally {
-        setLoading(false)
+        setDataLoading(false)
       }
     }
     getCartCount()
@@ -141,10 +146,10 @@ const CartMain = () => {
       <Container>
         <CartHeader>
           <h2>장바구니</h2>
-          <span>{`상품 (${loading ? ' ' : cartList.length})`}</span>
+          <span>{`상품 (${dataLoading ? ' ' : cartList.length})`}</span>
           <span className="a11y-hidden">개</span>
         </CartHeader>
-        {!loading ? (
+        {!dataLoading ? (
           cartList.length !== 0 ? (
             <>
               <SelectContainer>

@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react'
 import styled from 'styled-components'
-import {useRecoilState} from 'recoil'
+import {useRecoilState, useSetRecoilState} from 'recoil'
 import {useNavigate, useParams} from 'react-router-dom'
 
 import {calculateSaleCost, formatCostWithComma} from 'utils/cost'
@@ -9,6 +9,7 @@ import OrderList from './OrderList'
 import {tokenState} from 'recoil/token/atom'
 import {postOrderAPI} from 'api/order'
 import {h2Style, mainButtonStyle, mainContainerStyle} from 'styles/variables'
+import {loadingState} from 'recoil/loading/atom'
 
 const Container = styled.main`
   ${mainContainerStyle}
@@ -85,6 +86,7 @@ const OrderMain = () => {
   const [deliveryFee, setDeliveryFee] = useState(0)
   const formRef = useRef(null)
   const [token, setToken] = useRecoilState(tokenState)
+  const setLoading = useSetRecoilState(loadingState)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -98,6 +100,7 @@ const OrderMain = () => {
 
   const postOrder = async (value) => {
     try {
+      setLoading(true)
       const result = await postOrderAPI({...value, accessToken: token, orderId})
       if (result.data.success) {
         if (result.data.accessToken) setToken(result.data.accessToken)
@@ -114,6 +117,8 @@ const OrderMain = () => {
       }
     } catch {
       alert('잠시 후 다시 시도해 주세요')
+    } finally {
+      setLoading(false)
     }
   }
 

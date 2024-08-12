@@ -1,11 +1,11 @@
 import styled from 'styled-components'
 import {Link, useNavigate} from 'react-router-dom'
-import {useRecoilState, useRecoilValue} from 'recoil'
-import {useState} from 'react'
+import {useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil'
 
 import {postTempOrderAPI} from 'api/tempOrder'
 import {getSelectedListSelector} from 'recoil/cart/selector'
 import {tokenState} from 'recoil/token/atom'
+import {loadingState} from 'recoil/loading/atom'
 
 const Container = styled.div`
   display: flex;
@@ -47,11 +47,10 @@ const PurchaseButton = styled(Link)`
 const CartPurchase = () => {
   const selectedList = useRecoilValue(getSelectedListSelector)
   const [token, setToken] = useRecoilState(tokenState)
-  const [loading, setLoading] = useState(false)
+  const setLoading = useSetRecoilState(loadingState)
   const navigate = useNavigate()
 
   const handlePurchaseClick = async () => {
-    if (loading) return
     try {
       setLoading(true)
       const result = await postTempOrderAPI({accessToken: token, order: selectedList})

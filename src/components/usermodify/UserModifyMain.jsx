@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import {useNavigate} from 'react-router-dom'
-import {useRecoilState} from 'recoil'
+import {useRecoilState, useSetRecoilState} from 'recoil'
 import {useState} from 'react'
 
 import useInput from 'hooks/useInput'
@@ -8,6 +8,7 @@ import {postVerifyPasswordAPI} from 'api/user'
 import {tokenState} from 'recoil/token/atom'
 import UserModifyForm from './UserModifyForm'
 import {inputStyle, mainButtonStyle, mainContainerStyle, subButtonStyle} from 'styles/variables'
+import {loadingState} from 'recoil/loading/atom'
 
 const Container = styled.main`
   ${mainContainerStyle}
@@ -69,12 +70,14 @@ const OkButton = styled.button`
 
 const UserModifyMain = () => {
   const navigate = useNavigate()
+  const setLoading = useSetRecoilState(loadingState)
   const {value: passwordInput, handler} = useInput()
   const [token, setToken] = useRecoilState(tokenState)
   const [modify, setModify] = useState(false)
 
   const handleVerifyPassword = async (e) => {
     e.preventDefault()
+    setLoading(true)
     try {
       const result = await postVerifyPasswordAPI(token, passwordInput)
       if (result.data.accessToken) setToken(result.data.accessToken)
@@ -82,6 +85,8 @@ const UserModifyMain = () => {
       setModify(true)
     } catch {
       alert('잠시 후 다시 시도해주세요')
+    } finally {
+      setLoading(false)
     }
   }
 
